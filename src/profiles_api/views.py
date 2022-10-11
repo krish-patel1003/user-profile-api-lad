@@ -3,6 +3,9 @@ from django.shortcuts import render
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
+from rest_framework import viewsets
+from stack_data import Serializer
+
 from .serializers import HelloSerializer
 # Create your views here.
 
@@ -30,7 +33,7 @@ class HelloAPIView(APIView):
 
         if serializer.is_valid():
             name = serializer.data.get('name')
-            message = f'Hello {name}'
+            message = f'Hello {name}, from APIView'
 
             return Response({'mesage': message})
 
@@ -48,3 +51,51 @@ class HelloAPIView(APIView):
     def delete(self, request, pk=None):
         """Deletes an object"""
         return Response({"mehtod":"delete"})
+
+class HelloViewSet(viewsets.ViewSet):
+    """Test API ViewSet"""
+
+    serializer_class = HelloSerializer
+
+    def list(self, request):
+        """Return Hello message"""
+        a_viewset = [
+            'uses actions (list, create, retrieve, update, partial_update)',
+            'Automatically maps to URLs using Routers',
+            'Providers more functionality with less code',
+        ]
+
+        return Response({"message": "Hello", "a_viewset":a_viewset})
+    
+    def create(self, request):
+        """Create a new Hello message"""
+        serializer = HelloSerializer(data=request.data)
+        
+        if serializer.is_valid():
+            name = serializer.data.get('name')
+            message = f'Hello {name}, from ViewSet'
+
+            return Response({"message":message})
+        
+        else:
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+    def retrieve(self, request, pk=None):
+        """Handles getting ana object by its ID"""
+
+        return Response({"http_method":"GET"})
+    
+    def update(self, request, pk=None):
+        """Handles updating an object"""
+
+        return Response({"http_method":"PUT"})   
+
+    def partial_update(self, request, pk=None):
+        """Handles updating part of an object"""
+
+        return Response({"http_method":"PATCH"})
+    
+    def destroy(self, request, pk=None):
+        """Handles removing an object"""
+
+        return Response({"http_method":"DELETE"})
