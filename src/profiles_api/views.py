@@ -9,10 +9,15 @@ from rest_framework.authentication import TokenAuthentication
 from rest_framework import filters
 from rest_framework.authtoken.serializers import AuthTokenSerializer
 from rest_framework.authtoken.views import ObtainAuthToken
+from rest_framework.permissions import IsAuthenticatedOrReadOnly, IsAuthenticated
 
-from .serializers import HelloSerializer, UserProfileSerializer
-from .models import UserProfile
-from .permissions import UpdateOwnProfile
+from .serializers import (
+    HelloSerializer,
+    ProfileFeedItemSerializer,
+    UserProfileSerializer,
+)
+from .models import ProfileFeedItem, UserProfile
+from .permissions import PostOwnStatus, UpdateOwnProfile
 # Create your views here.
 
 class HelloAPIView(APIView):
@@ -126,3 +131,31 @@ class LoginViewSet(viewsets.ViewSet):
         """Use the ObtainAuthToken to validate and create a token"""
 
         return ObtainAuthToken().as_view()(request=request._request)
+
+
+class UserProfileFeedViewSet(viewsets.ModelViewSet):
+    """Handles creating, reading and updating profile feed item"""
+
+    authentication_classes = (TokenAuthentication,)
+    serializer_class = ProfileFeedItemSerializer
+    queryset = ProfileFeedItem.objects.all()
+    # permission_classes = (PostOwnStatus, IsAuthenticatedOrReadOnly,)
+    permission_classes = (PostOwnStatus, IsAuthenticated,)
+
+    def create(self, request):
+        """Creates new Feed"""
+        serializer = self.get_serializer(data=request.data)
+        print('request user - ', request.user)
+
+        if serializer.is_valid():
+            serializer.save(user=request.user)
+            return Response(serializer.data)
+        else:
+            return Response(serializer.errors)
+
+
+    # def perfom_create(self, serializer):
+    #     """Sets user profile to the logged in user"""
+    #     print("request.user - ",self.request)
+    #     serializer.save(user=self.request.user)
+
