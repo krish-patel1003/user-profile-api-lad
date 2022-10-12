@@ -2,11 +2,17 @@ import profile
 from django.urls import path, include
 from rest_framework.routers import SimpleRouter, DefaultRouter
 
-from .views import HelloAPIView, HelloViewSet, UserProfileViewSet
+from .views import (
+    HelloAPIView,
+    HelloViewSet,
+    UserProfileViewSet,
+    LoginViewSet,
+)
 
 router = DefaultRouter()
 router.register('hello-viewset', HelloViewSet, basename="hello-viewset")
 router.register('profile', UserProfileViewSet)
+router.register('login', LoginViewSet, basename='login')
 
 
 
