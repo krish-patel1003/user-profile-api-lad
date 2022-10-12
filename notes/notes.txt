@@ -1,0 +1,74 @@
+UserProfile 
+- Custom User model 
+- implements email & password login
+- Using AbstractBaseUser, PermissionsMixin
+- UserProfileManager class provides create_user and create_superuser
+- Change AUTH_USER_MODEL in settings.py 
+
+
+APIViews
+- Uses HTTP methods (GET, POST, PUT, PATCH, DELETE) 
+- used to implements complex logic
+- calling other APIs 
+- When to use APIViews?
+    - control oer logic
+    - Processing files and rendering a synchronous response
+    - calling other APIs
+    - Accessing local files or data
+
+
+APIViewSets
+- Uses models operations for functions
+    - (List, Create, Retrieve, Update, PartialUpdate, Destroy)
+- For standard DB operations
+- Faster
+- When to use APIViewSets?
+    - simple CRUD
+    - quick
+    - no to little customization
+    - working with standard data structure
+
+
+UserProfiles Basic Requirements
+- (Implemented Using APIViewSets - ModelViewSet)
+- DefaultRouters 
+- Create new Profile 
+    - Validate profile data
+    - in serializer def create method to validate email, name and password
+- List existing profiles
+    - Search for profiles
+    - mention filter_backend and search_fields 
+- View specific profile
+- Update my profile of logged in user
+    - Update name/email address
+    - mention authentication method > TokenAuthentication
+    - permissions.py > Create UpdateOwnProfile permissions class using BasePermission
+    - using has_object_permission only allow SAFE_METHODS
+    - and check the id of logged user and obj id
+- Delete profile
+
+
+LoginViewSet
+- serializer_class = AuthTokenSerializer
+- use ObtainAuthToken to validate and create a token
+
+ 
+ProfileFeedItem ViewSet
+- feed model
+- Creating new Feed Items
+    - Logged in user only
+- Updating feed Items
+    - Logged in user only
+- Delete profile feed Items
+    - logged in user only
+- Create PostOwnStatus permission class
+    - def has_object_permission and only allow SAFE_METHODS
+- Create ProfileFeedItemSerializer
+    - all fields 
+    - user field read_only
+- View other profile status updates
+    - all users 
+- permissions should include both PostOwnStatus, isAuthenticated(to allow user to view and update only when authenticated)
+- or isAuthenticatedOrReadonly(to give read only access to non authenticated user)
+
+
