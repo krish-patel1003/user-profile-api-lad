@@ -1,5 +1,5 @@
 from decimal import DefaultContext
-from enum import unique
+from enum import auto, unique
 from django.db import models
 from django.contrib.auth.base_user import AbstractBaseUser
 from django.contrib.auth.models import PermissionsMixin
@@ -30,3 +30,14 @@ class UserProfile(AbstractBaseUser, PermissionsMixin):
 
     def __str__(self):
         return f'{self.name} - {self.email}'
+
+
+class ProfileFeedItem(models.Model):
+    """Profile status update"""
+
+    user_profile = models.ForeignKey('UserProfile', on_delete=models.CASCADE)
+    status_text = models.CharField(max_length=255)
+    create_on = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f'{self.user_profile} - {self.status_text}'
